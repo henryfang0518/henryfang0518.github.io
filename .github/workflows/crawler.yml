@@ -25,7 +25,7 @@ jobs:
         env:
           # 這裡的 access_token 會從 GitHub Secrets 中讀取
           # 你需要在 GitHub Repo 的 Settings -> Secrets and variables -> Actions 中新增一個名為 `name` 的 Secret
-          access_token: ${{ secrets.ACCESS_TOKEN }}  # 這裡的 name 是你在 GitHub Secrets 中設定的 Secret 名稱 
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}  # 這裡的 name 是你在 GitHub Secrets 中設定的 Secret 名稱 
       - name: Commit Data Back To GitHub Repo  # 將爬到的數據 commit 回 GitHub repo
         run: |
           git config --global user.name "Henry Fang"
