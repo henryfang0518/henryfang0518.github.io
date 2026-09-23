@@ -9,13 +9,31 @@ load_dotenv()
 access_token = os.getenv('ACCESS_TOKEN')
 print(access_token)
 user_id = '9832554246856561'
-url = 'https://graph.instagram.com/v23.0/'+ user_id +'/media?access_token=' + access_token
+# url = 'https://graph.instagram.com/v23.0/'+ user_id +'/media?access_token=' + access_token
+url = 'https://graph.instagram.com/v23.0/'+ user_id +'/media'
 print(url)
-response = requests.get(url)
+# response = requests.get(url)
+params = {
+    "fields": ",".join([
+        "id",
+        "caption",
+        "media_type",
+        "media_url",
+        "permalink",
+        "timestamp",
+        "thumbnail_url",
+        "children{id,media_type,media_url,thumbnail_url}",
+    ]),
+    "access_token": access_token,
+    "limit": 5,
+}
 
+response = requests.get(url, params=params, timeout=30)
+response.raise_for_status()
 # 如果程式狀態回應是200，​那回應將會解析成json格式的數據，存在變數data中
 if response.status_code == 200:
     data = response.json()
+    print(data)
     #json.dumps將程式作用的對象(像是 字典、列表)進行格式化輸出
     # formatted_data = json.dumps(data, indent=4, sort_keys=True)
     postidList = [item.get('id') for item in data.get('data')]
