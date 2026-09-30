@@ -4,7 +4,7 @@ interface Props {
 	title?: string;
 }
 
-const { images, title = "¤å³¹·Ó¤ù" } = Astro.props;
+const { images, title = "æ–‡ç« ç…§ç‰‡" } = Astro.props;
 ---
 
 {
@@ -24,7 +24,7 @@ const { images, title = "¤å³¹·Ó¤ù" } = Astro.props;
 					>
 						<img
 							src={imageUrl}
-							alt={`${title}¡A²Ä ${index + 1} ±i·Ó¤ù`}
+							alt={`${title}ï¼Œç¬¬ ${index + 1} å¼µç…§ç‰‡`}
 							loading={index === 0 ? "eager" : "lazy"}
 							draggable="false"
 						/>
@@ -39,7 +39,7 @@ const { images, title = "¤å³¹·Ó¤ù" } = Astro.props;
 							type="button"
 							class="gallery-button"
 							data-gallery-previous
-							aria-label="¤W¤@±i·Ó¤ù"
+							aria-label="ä¸Šä¸€å¼µç…§ç‰‡"
 						>
 							&#10094;
 						</button>
@@ -57,7 +57,7 @@ const { images, title = "¤å³¹·Ó¤ù" } = Astro.props;
 							type="button"
 							class="gallery-button"
 							data-gallery-next
-							aria-label="¤U¤@±i·Ó¤ù"
+							aria-label="ä¸‹ä¸€å¼µç…§ç‰‡"
 						>
 							&#10095;
 						</button>
@@ -69,83 +69,122 @@ const { images, title = "¤å³¹·Ó¤ù" } = Astro.props;
 }
 
 <script>
-	function initializeGalleries() {
-		const galleries =
-			document.querySelectorAll<HTMLElement>("[data-gallery]");
+function initializeGalleries() {
+	const galleries =
+		document.querySelectorAll("[data-gallery]");
 
-		galleries.forEach((gallery) => {
-			if (gallery.dataset.initialized === "true") {
-				return;
-			}
+	galleries.forEach((gallery) => {
+		if (gallery.dataset.initialized === "true") {
+			return;
+		}
 
-			const viewport =
-				gallery.querySelector<HTMLElement>(
-					"[data-gallery-viewport]",
-				);
+		const viewport =
+			gallery.querySelector("[data-gallery-viewport]");
 
-			const previousButton =
-				gallery.querySelector<HTMLButtonElement>(
-					"[data-gallery-previous]",
-				);
+		const slides =
+			gallery.querySelectorAll("[data-gallery-slide]");
 
-			const nextButton =
-				gallery.querySelector<HTMLButtonElement>(
-					"[data-gallery-next]",
-				);
+		const previousButton =
+			gallery.querySelector("[data-gallery-previous]");
 
-			const currentCounter =
-				gallery.querySelector<HTMLElement>(
-					"[data-gallery-current]",
-				);
+		const nextButton =
+			gallery.querySelector("[data-gallery-next]");
 
-			if (!viewport) {
-				return;
-			}
+		const currentCounter =
+			gallery.querySelector("[data-gallery-current]");
 
-			gallery.dataset.initialized = "true";
+		if (!viewport || slides.length === 0) {
+			return;
+		}
 
-			const getCurrentIndex = () => {
-				if (viewport.clientWidth === 0) {
-					return 0;
-				}
+		gallery.dataset.initialized = "true";
 
-				return Math.round(
-					viewport.scrollLeft / viewport.clientWidth,
-				);
-			};
+		let currentIndex = 0;
+		let scrollTimer;
 
-			const updateCounter = () => {
-				if (!currentCounter) {
-					return;
-				}
-
+		const updateCounter = () => {
+			if (currentCounter) {
 				currentCounter.textContent =
-					String(getCurrentIndex() + 1);
-			};
+					String(currentIndex + 1);
+			}
+		};
 
-			previousButton?.addEventListener("click", () => {
-				viewport.scrollBy({
-					left: -viewport.clientWidth,
-					behavior: "smooth",
-				});
+		const updateButtons = () => {
+			if (previousButton) {
+				previousButton.disabled =
+					currentIndex === 0;
+			}
+
+			if (nextButton) {
+				nextButton.disabled =
+					currentIndex === slides.length - 1;
+			}
+		};
+
+		const updateGallery = () => {
+			const targetSlide = slides[currentIndex];
+
+			viewport.scrollTo({
+				left: targetSlide.offsetLeft,
+				behavior: "smooth",
 			});
-
-			nextButton?.addEventListener("click", () => {
-				viewport.scrollBy({
-					left: viewport.clientWidth,
-					behavior: "smooth",
-				});
-			});
-
-			viewport.addEventListener(
-				"scroll",
-				updateCounter,
-				{ passive: true },
-			);
 
 			updateCounter();
+			updateButtons();
+		};
+
+		previousButton?.addEventListener("click", () => {
+			if (currentIndex > 0) {
+				currentIndex -= 1;
+				updateGallery();
+			}
 		});
-	}
+
+		nextButton?.addEventListener("click", () => {
+			if (currentIndex < slides.length - 1) {
+				currentIndex += 1;
+				updateGallery();
+			}
+		});
+
+		viewport.addEventListener(
+			"scroll",
+			() => {
+				clearTimeout(scrollTimer);
+
+				scrollTimer = setTimeout(() => {
+					const viewportLeft =
+						viewport.scrollLeft;
+
+					let closestIndex = 0;
+					let closestDistance = Infinity;
+
+					slides.forEach((slide, index) => {
+						const distance = Math.abs(
+							slide.offsetLeft - viewportLeft,
+						);
+
+						if (distance < closestDistance) {
+							closestDistance = distance;
+							closestIndex = index;
+						}
+					});
+
+					currentIndex = closestIndex;
+
+					updateCounter();
+					updateButtons();
+				}, 80);
+			},
+			{
+				passive: true,
+			},
+		);
+
+		updateCounter();
+		updateButtons();
+	});
+}
 
 	initializeGalleries();
 
@@ -233,6 +272,12 @@ const { images, title = "¤å³¹·Ó¤ù" } = Astro.props;
 	.gallery-button:active {
 		transform: scale(0.92);
 	}
+
+.gallery-button:disabled {
+	cursor: default;
+	opacity: 0.3;
+	pointer-events: none;
+}
 
 	.gallery-button:focus-visible {
 		outline: 2px solid var(--primary);
