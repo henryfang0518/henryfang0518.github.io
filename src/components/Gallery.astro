@@ -71,7 +71,7 @@ const { images, title = "文章照片" } = Astro.props;
 <script>
 function initializeGalleries() {
 	const galleries =
-		document.querySelectorAll("[data-gallery]");
+		document.querySelectorAll<HTMLElement>("[data-gallery]");
 
 	galleries.forEach((gallery) => {
 		if (gallery.dataset.initialized === "true") {
@@ -79,19 +79,29 @@ function initializeGalleries() {
 		}
 
 		const viewport =
-			gallery.querySelector("[data-gallery-viewport]");
+			gallery.querySelector<HTMLElement>(
+				"[data-gallery-viewport]",
+			);
 
 		const slides =
-			gallery.querySelectorAll("[data-gallery-slide]");
+			gallery.querySelectorAll<HTMLElement>(
+				"[data-gallery-slide]",
+			);
 
 		const previousButton =
-			gallery.querySelector("[data-gallery-previous]");
+			gallery.querySelector<HTMLButtonElement>(
+				"[data-gallery-previous]",
+			);
 
 		const nextButton =
-			gallery.querySelector("[data-gallery-next]");
+			gallery.querySelector<HTMLButtonElement>(
+				"[data-gallery-next]",
+			);
 
 		const currentCounter =
-			gallery.querySelector("[data-gallery-current]");
+			gallery.querySelector<HTMLElement>(
+				"[data-gallery-current]",
+			);
 
 		if (!viewport || slides.length === 0) {
 			return;
@@ -100,7 +110,9 @@ function initializeGalleries() {
 		gallery.dataset.initialized = "true";
 
 		let currentIndex = 0;
-		let scrollTimer;
+
+		let scrollTimer:
+			ReturnType<typeof setTimeout> | undefined;
 
 		const updateCounter = () => {
 			if (currentCounter) {
@@ -123,6 +135,10 @@ function initializeGalleries() {
 
 		const updateGallery = () => {
 			const targetSlide = slides[currentIndex];
+
+			if (!targetSlide) {
+				return;
+			}
 
 			viewport.scrollTo({
 				left: targetSlide.offsetLeft,
@@ -150,14 +166,17 @@ function initializeGalleries() {
 		viewport.addEventListener(
 			"scroll",
 			() => {
-				clearTimeout(scrollTimer);
+				if (scrollTimer !== undefined) {
+					clearTimeout(scrollTimer);
+				}
 
 				scrollTimer = setTimeout(() => {
 					const viewportLeft =
 						viewport.scrollLeft;
 
 					let closestIndex = 0;
-					let closestDistance = Infinity;
+					let closestDistance =
+						Number.POSITIVE_INFINITY;
 
 					slides.forEach((slide, index) => {
 						const distance = Math.abs(
