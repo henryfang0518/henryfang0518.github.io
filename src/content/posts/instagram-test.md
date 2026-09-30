@@ -3,15 +3,15 @@ title: 京都永觀堂夜楓散策
 published: 2026-11-23
 description: 京都賞楓紀錄
 
-image: "https://instagram-media-proxy.wsx852.workers.dev/media/18112184920806243"
+image: "https://ins-media.wsx852.workers.dev/media/18112184920806243"
 
 images:
-  - "https://instagram-media-proxy.wsx852.workers.dev/media/18112184920806243"
-  - "https://instagram-media-proxy.wsx852.workers.dev/media/18203882446370898"
-  - "https://instagram-media-proxy.wsx852.workers.dev/media/18162970591482144"
-  - "https://instagram-media-proxy.wsx852.workers.dev/media/17975661780090541"
-  - "https://instagram-media-proxy.wsx852.workers.dev/media/17915551299240930"
-  - "https://instagram-media-proxy.wsx852.workers.dev/media/18459814231189488"
+  - "https://ins-media.wsx852.workers.dev/media/18112184920806243"
+  - "https://ins-media.wsx852.workers.dev/media/18203882446370898"
+  - "https://ins-media.wsx852.workers.dev/media/18162970591482144"
+  - "https://ins-media.wsx852.workers.dev/media/17975661780090541"
+  - "https://ins-media.wsx852.workers.dev/media/17915551299240930"
+  - "https://ins-media.wsx852.workers.dev/media/18459814231189488"
 
 instagramId: "17926996968164254"
 
